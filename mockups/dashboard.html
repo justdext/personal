@@ -1,0 +1,971 @@
+<title>Shonna's Command Deck</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  /* Layout: a command deck — one focus band across the top, then a 3-column
+     widget grid (work rails left + centre, motivation/pulse right). Gold is
+     reserved exclusively for earned stars so the reward reads as a reward. */
+  :root {
+    /* neutrals: cool slate, biased toward the category blues */
+    --bg: #eef1f6;
+    --surface: #ffffff;
+    --surface-2: #f6f8fb;
+    --ink: #1b2332;
+    --ink-2: #4a556b;
+    --ink-3: #78839b;
+    --line: #dde3ed;
+    --line-soft: #e8edf4;
+
+    /* category hues — distinct, desaturated, legible on white */
+    --rr: #c0564a;
+    --rr-soft: #fbeceb;
+    --sl: #3d6fa8;
+    --sl-soft: #eaf1f9;
+    --ph: #3f8f72;
+    --ph-soft: #e9f4ef;
+
+    /* semantic — attention, separate from accent */
+    --urgent: #b4442f;
+    --urgent-soft: #fceee9;
+    --warn: #9a6a12;
+    --warn-soft: #fcf3e2;
+
+    /* reward — gold, used NOWHERE else */
+    --gold: #c99a2e;
+    --gold-lit: #f0c04a;
+    --gold-soft: #fdf5e3;
+
+    --radius: 14px;
+    --radius-sm: 9px;
+    --shadow: 0 1px 2px rgba(27,35,50,.05), 0 6px 18px -8px rgba(27,35,50,.14);
+
+    --display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    --body: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11151d;
+      --surface: #192029;
+      --surface-2: #1f2731;
+      --ink: #e8edf5;
+      --ink-2: #a8b4c6;
+      --ink-3: #78869c;
+      --line: #2a333f;
+      --line-soft: #222b36;
+      --rr: #e8897c;
+      --rr-soft: #2e1f1e;
+      --sl: #7eaad9;
+      --sl-soft: #1b2430;
+      --ph: #6fbd9c;
+      --ph-soft: #19271f;
+      --urgent: #e8886d;
+      --urgent-soft: #2f1d18;
+      --warn: #d8a845;
+      --warn-soft: #2b2316;
+      --gold: #e8bb52;
+      --gold-lit: #f7d575;
+      --gold-soft: #2a2316;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px -8px rgba(0,0,0,.5);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11151d;
+    --surface: #192029;
+    --surface-2: #1f2731;
+    --ink: #e8edf5;
+    --ink-2: #a8b4c6;
+    --ink-3: #78869c;
+    --line: #2a333f;
+    --line-soft: #222b36;
+    --rr: #e8897c;
+    --rr-soft: #2e1f1e;
+    --sl: #7eaad9;
+    --sl-soft: #1b2430;
+    --ph: #6fbd9c;
+    --ph-soft: #19271f;
+    --urgent: #e8886d;
+    --urgent-soft: #2f1d18;
+    --warn: #d8a845;
+    --warn-soft: #2b2316;
+    --gold: #e8bb52;
+    --gold-lit: #f7d575;
+    --gold-soft: #2a2316;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px -8px rgba(0,0,0,.5);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 20px 56px;
+  }
+
+  /* ---------- sample-data banner ---------- */
+  .sample {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: var(--warn-soft);
+    border: 1px solid color-mix(in srgb, var(--warn) 28%, transparent);
+    color: var(--warn);
+    border-radius: var(--radius-sm);
+    padding: 9px 13px;
+    font-size: 12.5px;
+    font-weight: 500;
+    margin-bottom: 18px;
+  }
+  .sample strong { font-weight: 600; }
+
+  /* ---------- top band ---------- */
+  .band {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 22px;
+    align-items: end;
+    margin-bottom: 18px;
+  }
+  .hello { min-width: 0; }
+  .date {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .hello h1 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(27px, 4vw, 40px);
+    line-height: 1.05;
+    letter-spacing: -.022em;
+    margin: 5px 0 0;
+    text-wrap: balance;
+  }
+  .hello p { margin: 7px 0 0; color: var(--ink-2); font-size: 14.5px; max-width: 54ch; }
+
+  /* star ledger */
+  .ledger {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 13px 16px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .ledger-n {
+    font-family: var(--display);
+    font-size: 30px; font-weight: 800; line-height: 1;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+  }
+  .ledger-lab {
+    font-size: 11px; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600; margin-top: 4px;
+  }
+  .stars { display: flex; gap: 3px; flex-wrap: wrap; max-width: 150px; }
+  .stars span { font-size: 15px; line-height: 1; color: var(--gold-lit); }
+  .stars span.empty { color: var(--line); }
+
+  /* ---------- the one focus ---------- */
+  .focus {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--gold);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 17px 20px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 18px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .focus-eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--gold); font-weight: 600;
+  }
+  .focus h2 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(18px, 2.2vw, 23px); letter-spacing: -.015em;
+    margin: 6px 0 0; line-height: 1.25; text-wrap: balance;
+  }
+  .focus-meta { margin-top: 7px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+  /* ---------- grid ---------- */
+  .deck {
+    display: grid;
+    grid-template-columns: 1.05fr 1.15fr .95fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .col { display: grid; gap: 16px; min-width: 0; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 15px 17px 16px;
+    min-width: 0;
+  }
+  .card-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 10px; margin-bottom: 12px;
+  }
+  .card-head h3 {
+    font-family: var(--display); font-weight: 700; font-size: 15px;
+    letter-spacing: -.008em; margin: 0;
+  }
+  .count {
+    font-family: var(--mono); font-size: 11.5px; font-weight: 500;
+    color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+
+  /* pills & badges */
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 600; letter-spacing: .02em;
+    padding: 3px 8px; border-radius: 999px; white-space: nowrap;
+  }
+  .pill.rr { background: var(--rr-soft); color: var(--rr); }
+  .pill.sl { background: var(--sl-soft); color: var(--sl); }
+  .pill.ph { background: var(--ph-soft); color: var(--ph); }
+  .pill.urgent { background: var(--urgent-soft); color: var(--urgent); }
+  .pill.gold { background: var(--gold-soft); color: var(--gold); }
+
+  .src {
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--ink-3);
+    border: 1px solid var(--line); border-radius: 4px;
+    padding: 1px 4px; white-space: nowrap; font-weight: 500;
+  }
+
+  /* ---------- task rails ---------- */
+  .tabs { display: flex; gap: 5px; margin-bottom: 11px; flex-wrap: wrap; }
+  .tab {
+    font-family: var(--body); font-size: 12px; font-weight: 600;
+    border: 1px solid var(--line); background: var(--surface-2);
+    color: var(--ink-2); border-radius: 999px;
+    padding: 0 11px; min-height: 30px;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .tab:hover { border-color: var(--ink-3); }
+  .tab[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+  .tab .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+  .tab .dot.rr { background: var(--rr); }
+  .tab .dot.sl { background: var(--sl); }
+  .tab .dot.ph { background: var(--ph); }
+
+  .tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .task {
+    display: grid; grid-template-columns: auto 1fr; gap: 11px;
+    align-items: start; padding: 9px 4px; border-radius: var(--radius-sm);
+    position: relative;
+  }
+  .task + .task { border-top: 1px solid var(--line-soft); }
+  .task:hover { background: var(--surface-2); }
+
+  .box {
+    appearance: none; -webkit-appearance: none;
+    width: 19px; height: 19px; margin: 1px 0 0; flex: none;
+    border: 1.5px solid var(--ink-3); border-radius: 5px;
+    background: transparent; cursor: pointer; position: relative;
+  }
+  .box:hover { border-color: var(--ink); }
+  .box:checked { background: var(--gold); border-color: var(--gold); }
+  .box:checked::after {
+    content: ""; position: absolute; left: 5px; top: 1.5px;
+    width: 5px; height: 10px; border: solid #fff;
+    border-width: 0 2px 2px 0; transform: rotate(45deg);
+  }
+  .task-b { min-width: 0; }
+  .task-t { font-size: 13.5px; line-height: 1.4; color: var(--ink); }
+  .task-m { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; margin-top: 5px; }
+  .task.done .task-t { text-decoration: line-through; color: var(--ink-3); }
+  .task.done { opacity: .62; }
+
+  /* star burst on completion */
+  .burst {
+    position: absolute; right: 6px; top: 7px;
+    font-size: 17px; color: var(--gold-lit);
+    pointer-events: none; opacity: 0;
+  }
+  .task.just .burst { animation: pop .85s ease-out; }
+  @keyframes pop {
+    0%   { opacity: 0; transform: scale(.4) rotate(-25deg); }
+    35%  { opacity: 1; transform: scale(1.35) rotate(8deg); }
+    100% { opacity: 0; transform: scale(1) translateY(-16px) rotate(14deg); }
+  }
+
+  /* add row */
+  .add { display: flex; gap: 7px; margin-top: 11px; }
+  .add input {
+    flex: 1; min-width: 0; font-family: var(--body); font-size: 13px;
+    color: var(--ink); background: var(--surface-2);
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 0 11px; min-height: 36px;
+  }
+  .add input::placeholder { color: var(--ink-3); }
+  .btn {
+    font-family: var(--body); font-size: 12.5px; font-weight: 600;
+    background: var(--ink); color: var(--surface);
+    border: 1px solid var(--ink); border-radius: var(--radius-sm);
+    padding: 0 14px; min-height: 36px; cursor: pointer; white-space: nowrap;
+  }
+  .btn:hover { opacity: .88; }
+  .btn.ghost { background: transparent; color: var(--ink-2); border-color: var(--line); }
+  .btn.ghost:hover { border-color: var(--ink-3); color: var(--ink); }
+
+  /* ---------- needs a reply ---------- */
+  .mail { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .mailrow {
+    display: grid; grid-template-columns: 1fr auto; gap: 10px;
+    padding: 10px 4px; align-items: start;
+  }
+  .mailrow + .mailrow { border-top: 1px solid var(--line-soft); }
+  .mailrow:hover { background: var(--surface-2); border-radius: var(--radius-sm); }
+  .from { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .subj { font-size: 12.5px; color: var(--ink-2); margin-top: 2px; line-height: 1.35; }
+  .mailmeta { display: flex; gap: 6px; align-items: center; margin-top: 6px; flex-wrap: wrap; }
+  .aged { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); white-space: nowrap; }
+  .acct {
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: .05em;
+    text-transform: uppercase; font-weight: 500;
+    padding: 1px 5px; border-radius: 4px; white-space: nowrap;
+  }
+  .acct.work { background: var(--rr-soft); color: var(--rr); }
+  .acct.pers { background: var(--sl-soft); color: var(--sl); }
+
+  /* ---------- week at a glance ---------- */
+  .week { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 5px; }
+  .day { min-width: 0; }
+  .dh {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--ink-3); font-weight: 500;
+    text-align: center; padding-bottom: 5px;
+  }
+  .dnum {
+    font-family: var(--display); font-size: 14px; font-weight: 700;
+    text-align: center; color: var(--ink-2); margin-bottom: 5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .day.today .dh, .day.today .dnum { color: var(--gold); }
+  .daybox {
+    background: var(--surface-2); border: 1px solid var(--line-soft);
+    border-radius: var(--radius-sm); padding: 5px; min-height: 92px;
+    display: grid; gap: 3px; align-content: start;
+  }
+  .day.today .daybox { border-color: var(--gold); background: var(--gold-soft); }
+  .ev {
+    font-size: 10.5px; line-height: 1.25; padding: 3px 5px;
+    border-radius: 5px; border-left: 2.5px solid var(--ink-3);
+    background: var(--surface); color: var(--ink-2);
+    overflow-wrap: anywhere;
+  }
+  .ev.rr { border-left-color: var(--rr); }
+  .ev.sl { border-left-color: var(--sl); }
+  .ev.ph { border-left-color: var(--ph); }
+  .ev b { display: block; font-family: var(--mono); font-size: 9.5px; color: var(--ink-3); font-weight: 500; }
+
+  /* ---------- reminders ---------- */
+  .rem { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+  .rem li {
+    display: grid; grid-template-columns: auto 1fr; gap: 9px;
+    align-items: baseline; font-size: 12.5px; color: var(--ink-2);
+  }
+  .rem time {
+    font-family: var(--mono); font-size: 11px; color: var(--ink-3);
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+
+  /* ---------- business pulse ---------- */
+  .metric + .metric { margin-top: 13px; padding-top: 13px; border-top: 1px solid var(--line-soft); }
+  .mlab {
+    font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600;
+  }
+  .mrow { display: flex; align-items: baseline; gap: 9px; margin-top: 5px; flex-wrap: wrap; }
+  .mval {
+    font-family: var(--display); font-size: 26px; font-weight: 800;
+    letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums;
+  }
+  .delta { font-family: var(--mono); font-size: 11.5px; font-weight: 600; }
+  .delta.up { color: var(--ph); }
+  .delta.dn { color: var(--urgent); }
+  .msub { font-size: 11.5px; color: var(--ink-3); margin-top: 5px; }
+  .spark { display: block; width: 100%; height: 30px; margin-top: 9px; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 5px; }
+
+  /* ---------- vision board ---------- */
+  .vision { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .vt {
+    position: relative; aspect-ratio: 4/3; max-width: 100%;
+    border-radius: var(--radius-sm); overflow: hidden;
+    border: 1px solid var(--line);
+    display: flex; align-items: flex-end;
+    padding: 8px; isolation: isolate;
+  }
+  .vt::before {
+    content: ""; position: absolute; inset: 0; z-index: -2;
+  }
+  .vt::after {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(to top, rgba(10,14,20,.78) 0%, rgba(10,14,20,.12) 62%, transparent 100%);
+  }
+  .vt span {
+    font-family: var(--display); font-size: 11.5px; font-weight: 700;
+    color: #fff; line-height: 1.25; letter-spacing: -.005em;
+    text-shadow: 0 1px 3px rgba(0,0,0,.5);
+  }
+  .vt.a::before { background: linear-gradient(145deg, #5b8fc7, #2f5d8f 55%, #1d3c5e); }
+  .vt.b::before { background: linear-gradient(145deg, #d99a6c, #b9643f 55%, #8c4228); }
+  .vt.c::before { background: linear-gradient(145deg, #6fae92, #3d8268 55%, #255744); }
+  .vt.d::before { background: linear-gradient(145deg, #a98fc0, #7a5f98 55%, #513d6b); }
+  .vt.wide { grid-column: 1 / -1; aspect-ratio: 16/7; }
+  .ph-note {
+    font-size: 11px; color: var(--ink-3); margin-top: 9px; line-height: 1.4;
+  }
+
+  /* ---------- horoscope / affirmation ---------- */
+  .aff {
+    font-family: var(--display); font-weight: 500; font-size: 17px;
+    line-height: 1.4; letter-spacing: -.012em; color: var(--ink);
+    text-wrap: balance; margin: 0;
+  }
+  .aff-by { font-size: 11.5px; color: var(--ink-3); margin-top: 10px; }
+  .horo { font-size: 13px; color: var(--ink-2); line-height: 1.55; margin: 0; }
+  .needs-sign {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    background: var(--warn-soft); color: var(--warn);
+    border: 1px dashed color-mix(in srgb, var(--warn) 40%, transparent);
+    border-radius: var(--radius-sm); padding: 8px 11px;
+    font-size: 11.5px; font-weight: 500; margin-top: 11px;
+  }
+
+  /* ---------- ideas ---------- */
+  .ideas { list-style: none; margin: 11px 0 0; padding: 0; display: grid; gap: 6px; }
+  .ideas li {
+    font-size: 12.5px; color: var(--ink-2); line-height: 1.4;
+    background: var(--surface-2); border: 1px solid var(--line-soft);
+    border-radius: var(--radius-sm); padding: 7px 10px;
+    display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: baseline;
+  }
+  .ideas time { font-family: var(--mono); font-size: 10px; color: var(--ink-3); white-space: nowrap; }
+
+  .empty-note { font-size: 12.5px; color: var(--ink-3); font-style: italic; }
+
+  :where(button, input, [tabindex]):focus-visible {
+    outline: 2px solid var(--sl); outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+
+  /* ---------- narrower ---------- */
+  @media (max-width: 1180px) {
+    .deck { grid-template-columns: 1fr 1fr; }
+    .col.three { grid-column: 1 / -1; }
+    .col.three { grid-template-columns: 1fr 1fr; display: grid; }
+  }
+  @media (max-width: 760px) {
+    .deck { grid-template-columns: 1fr; }
+    .col.three { grid-template-columns: 1fr; }
+    .band { grid-template-columns: 1fr; align-items: start; }
+    .focus { grid-template-columns: 1fr; }
+    .week { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .daybox { min-height: 62px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="sample">
+    <strong>Prototype — sample data.</strong>
+    Every number, email and event below is invented to show the layout. Nothing here is connected to Gmail, Calendar, Sunless Legacy or Recreating Rays yet.
+  </div>
+
+  <div class="band">
+    <div class="hello">
+      <div class="date" id="today-str">Saturday, October 31</div>
+      <h1>Morning, Shonna.</h1>
+      <p>Three things need a reply today, and the Olathe retail order closes tonight. Everything else can wait.</p>
+    </div>
+    <div class="ledger">
+      <div>
+        <div class="ledger-n" id="star-count">11</div>
+        <div class="ledger-lab">Stars this week</div>
+      </div>
+      <div>
+        <div class="stars" id="star-row" aria-label="Gold stars earned this week"></div>
+        <div class="ledger-lab" style="margin-top:7px">4-week streak</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="focus">
+    <div>
+      <div class="focus-eyebrow">Start here</div>
+      <h2>Approve the November retail order before the 6&nbsp;PM vendor cutoff</h2>
+      <div class="focus-meta">
+        <span class="pill rr">Recreating Rays</span>
+        <span class="src">from email</span>
+        <span class="aged">sat 2 days</span>
+      </div>
+    </div>
+    <button class="btn" id="focus-done" type="button">Mark done &amp; take the star</button>
+  </div>
+
+  <div class="deck">
+
+    <!-- ============ column 1 ============ -->
+    <div class="col">
+
+      <section class="card">
+        <div class="card-head">
+          <h3>Tasks</h3>
+          <span class="count" id="task-count">9 open</span>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="Task category">
+          <button class="tab" role="tab" aria-selected="true" data-cat="all" type="button">All</button>
+          <button class="tab" role="tab" aria-selected="false" data-cat="rr" type="button"><i class="dot rr"></i>RR</button>
+          <button class="tab" role="tab" aria-selected="false" data-cat="sl" type="button"><i class="dot sl"></i>SL</button>
+          <button class="tab" role="tab" aria-selected="false" data-cat="ph" type="button"><i class="dot ph"></i>Personal</button>
+        </div>
+
+        <ul class="tasks" id="task-list"></ul>
+
+        <div class="add">
+          <input id="task-input" type="text" placeholder="Add a task — it lands in the open tab" aria-label="New task">
+          <button class="btn" id="task-add" type="button">Add</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h3>Reminders from Calendar</h3>
+          <span class="count">next 48h</span>
+        </div>
+        <ul class="rem">
+          <li><time>today 4:30p</time><span>Take Brody to practice</span></li>
+          <li><time>today 6:00p</time><span>Vendor order cutoff — retail</span></li>
+          <li><time>tomorrow 9:00a</time><span>Pay Sunless Legacy card</span></li>
+          <li><time>tomorrow 1:00p</time><span>Call back the Lee's Summit landlord</span></li>
+          <li><time>mon 8:00a</time><span>Week-ahead report lands in inbox</span></li>
+        </ul>
+      </section>
+
+    </div>
+
+    <!-- ============ column 2 ============ -->
+    <div class="col">
+
+      <section class="card">
+        <div class="card-head">
+          <h3>Needs a reply from you</h3>
+          <span class="count" id="mail-count">3 waiting</span>
+        </div>
+        <ul class="mail" id="mail-list">
+          <li class="mailrow">
+            <div>
+              <div class="from">Amanda — RR management</div>
+              <div class="subj">Can you approve Lindsey's Training Tan dates for December?</div>
+              <div class="mailmeta">
+                <span class="acct work">work</span>
+                <span class="pill urgent">2 days</span>
+                <span class="aged">needs a yes/no</span>
+              </div>
+            </div>
+            <button class="btn ghost" type="button" data-mail="1">Done</button>
+          </li>
+          <li class="mailrow">
+            <div>
+              <div class="from">Sunless Legacy — affiliate</div>
+              <div class="subj">Two affiliate applications pending your review since Tuesday</div>
+              <div class="mailmeta">
+                <span class="acct pers">personal</span>
+                <span class="pill sl">SL</span>
+                <span class="aged">4 days</span>
+              </div>
+            </div>
+            <button class="btn ghost" type="button" data-mail="2">Done</button>
+          </li>
+          <li class="mailrow">
+            <div>
+              <div class="from">Dr. Whitfield's office</div>
+              <div class="subj">Confirm Thursday 2:00 PM cleaning?</div>
+              <div class="mailmeta">
+                <span class="acct pers">personal</span>
+                <span class="pill ph">Health</span>
+                <span class="aged">1 day</span>
+              </div>
+            </div>
+            <button class="btn ghost" type="button" data-mail="3">Done</button>
+          </li>
+        </ul>
+        <p class="ph-note">Pulled from both inboxes. A message lands here when it is addressed to her and has no reply from her after 24 hours — not every unread.</p>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h3>Week at a glance</h3>
+          <span class="count">Oct 27 – Nov 2</span>
+        </div>
+        <div class="week">
+          <div class="day">
+            <div class="dh">Mon</div><div class="dnum">27</div>
+            <div class="daybox">
+              <div class="ev rr"><b>8:00a</b>Week-ahead report</div>
+              <div class="ev rr"><b>10a</b>Olathe walk</div>
+            </div>
+          </div>
+          <div class="day">
+            <div class="dh">Tue</div><div class="dnum">28</div>
+            <div class="daybox">
+              <div class="ev sl"><b>11a</b>SL content block</div>
+            </div>
+          </div>
+          <div class="day">
+            <div class="dh">Wed</div><div class="dnum">29</div>
+            <div class="daybox">
+              <div class="ev rr"><b>9:00a</b>Management mtg</div>
+              <div class="ev ph"><b>5:30p</b>Barre class</div>
+            </div>
+          </div>
+          <div class="day">
+            <div class="dh">Thu</div><div class="dnum">30</div>
+            <div class="daybox">
+              <div class="ev ph"><b>2:00p</b>Dentist</div>
+              <div class="ev sl"><b>4:00p</b>Affiliate call</div>
+            </div>
+          </div>
+          <div class="day">
+            <div class="dh">Fri</div><div class="dnum">31</div>
+            <div class="daybox">
+              <div class="ev rr"><b>6:00p</b>Order cutoff</div>
+            </div>
+          </div>
+          <div class="day today">
+            <div class="dh">Sat</div><div class="dnum">1</div>
+            <div class="daybox">
+              <div class="ev ph"><b>9:00a</b>Long run</div>
+              <div class="ev rr"><b>12p</b>Olathe busy day</div>
+            </div>
+          </div>
+          <div class="day">
+            <div class="dh">Sun</div><div class="dnum">2</div>
+            <div class="daybox">
+              <div class="ev ph"><b>all day</b>Rest</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h3>Ideas</h3>
+          <span class="count">park it, come back later</span>
+        </div>
+        <div class="add" style="margin-top:0">
+          <input id="idea-input" type="text" placeholder="Capture it before it's gone…" aria-label="New idea">
+          <button class="btn" id="idea-add" type="button">Park it</button>
+        </div>
+        <ul class="ideas" id="idea-list">
+          <li><span>Holiday gift-card bundle for RRVIP members</span><time>Oct 29</time></li>
+          <li><span>SL course module on troubleshooting streaks</span><time>Oct 27</time></li>
+          <li><span>Ask Justin about a referral card for the front desk</span><time>Oct 24</time></li>
+        </ul>
+      </section>
+
+    </div>
+
+    <!-- ============ column 3 ============ -->
+    <div class="col three">
+
+      <section class="card">
+        <div class="card-head">
+          <h3>Business pulse</h3>
+          <span class="count">as of 7:00a</span>
+        </div>
+
+        <div class="metric">
+          <div class="mlab">Sunless Legacy — MRR</div>
+          <div class="mrow">
+            <div class="mval">$4,280</div>
+            <div class="delta up">▲ 6.2%</div>
+          </div>
+          <div class="msub">84 active subscribers · 3 new, 1 churned this month</div>
+          <svg class="spark" viewBox="0 0 220 30" preserveAspectRatio="none" aria-label="Sunless Legacy monthly recurring revenue trending up over six months">
+            <polygon points="2,24 38,22 74,19 110,17 146,12 182,9 218,5 218,30 2,30"
+              fill="var(--sl)" opacity=".13"></polygon>
+            <polyline points="2,24 38,22 74,19 110,17 146,12 182,9 218,5"
+              fill="none" stroke="var(--sl)" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"></polyline>
+            <circle cx="218" cy="5" r="3" fill="var(--sl)"></circle>
+          </svg>
+        </div>
+
+        <div class="metric">
+          <div class="mlab">Recreating Rays — revenue</div>
+          <div class="split">
+            <div>
+              <div class="mrow"><div class="mval" style="font-size:21px">$18,640</div></div>
+              <div class="msub">Week to date · ▲ 4.1% vs last wk</div>
+            </div>
+            <div>
+              <div class="mrow"><div class="mval" style="font-size:21px">$71,205</div></div>
+              <div class="msub">Month to date · ▲ 9.8% vs Sep</div>
+            </div>
+          </div>
+          <div class="msub" style="margin-top:9px">Both studios. Olathe $44.1k · Lee's Summit $27.1k</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h3>Today's affirmation</h3>
+        </div>
+        <p class="aff">You are allowed to do one thing at a time. That is still progress.</p>
+        <div class="aff-by">New every morning at 5&nbsp;AM.</div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h3>Horoscope</h3>
+          <span class="count" id="sign-label">sign not set</span>
+        </div>
+        <p class="horo">Energy gathers around the things you have been putting off. A conversation you have been avoiding turns out to be shorter and kinder than you expected. Say the number you actually need.</p>
+        <div class="needs-sign">Needs Shonna's star sign before this is real — placeholder text for now.</div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h3>Vision board</h3>
+          <span class="count">what it's all for</span>
+        </div>
+        <div class="vision">
+          <div class="vt wide a"><span>Lake house, summer 2028</span></div>
+          <div class="vt b"><span>Studio #3 open</span></div>
+          <div class="vt c"><span>Half marathon, under 2:15</span></div>
+          <div class="vt d" style="grid-column:1 / -1; aspect-ratio:16/7"><span>Two weeks in Italy, no laptop</span></div>
+        </div>
+        <p class="ph-note">Placeholders. Shonna uploads her own photos here and drags them into any order — the real board is hers, not a stock set.</p>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- storage: per-viewer convenience only ---------- */
+  var KEY = "shonna-deck-demo-v1";
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; }
+    catch (e) { return {}; }
+  }
+  function save(o) {
+    try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) { /* private window */ }
+  }
+  var state = load();
+  if (typeof state.stars !== "number") state.stars = 11;
+  if (!state.done) state.done = {};
+
+  /* ---------- sample tasks ---------- */
+  var TASKS = [
+    { id: "t1", cat: "rr", t: "Approve the November retail order", src: "email", due: "today, 6 PM", urgent: true },
+    { id: "t2", cat: "rr", t: "Review 4 Passport service photos flagged as needing attention", src: "manual" },
+    { id: "t3", cat: "rr", t: "Answer 3 client questions waiting on your wording", src: "email" },
+    { id: "t4", cat: "rr", t: "Sign off the paid-ads weekly report", src: "email" },
+    { id: "t5", cat: "sl", t: "Record Module 4 — solution troubleshooting", src: "manual" },
+    { id: "t6", cat: "sl", t: "Reply to 2 affiliate applications", src: "email" },
+    { id: "t7", cat: "sl", t: "November subscriber newsletter", src: "cal", due: "Wed" },
+    { id: "t8", cat: "ph", t: "Confirm Thursday dentist appointment", src: "email", due: "Thu, 2 PM" },
+    { id: "t9", cat: "ph", t: "Refill prescription before the weekend", src: "manual" }
+  ];
+  var LABEL = { rr: "Recreating Rays", sl: "Sunless Legacy", ph: "Personal / Health" };
+  var cat = "all";
+
+  var listEl   = document.getElementById("task-list");
+  var countEl  = document.getElementById("task-count");
+  var starNum  = document.getElementById("star-count");
+  var starRow  = document.getElementById("star-row");
+
+  function drawStars() {
+    starNum.textContent = state.stars;
+    var html = "";
+    var filled = Math.min(state.stars, 14);
+    for (var i = 0; i < 14; i++) {
+      html += '<span class="' + (i < filled ? "" : "empty") + '">★</span>';
+    }
+    starRow.innerHTML = html;
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function draw() {
+    var shown = TASKS.filter(function (t) { return cat === "all" || t.cat === cat; });
+    var open = TASKS.filter(function (t) { return !state.done[t.id]; }).length;
+    countEl.textContent = open + " open";
+
+    if (!shown.length) {
+      listEl.innerHTML = '<li class="empty-note">Nothing in this category — that is allowed.</li>';
+      return;
+    }
+
+    listEl.innerHTML = shown.map(function (t) {
+      var done = !!state.done[t.id];
+      return '<li class="task' + (done ? " done" : "") + '" data-id="' + t.id + '">' +
+        '<input class="box" type="checkbox" id="box-' + t.id + '"' + (done ? " checked" : "") +
+          ' aria-label="' + esc(t.t) + '">' +
+        '<div class="task-b">' +
+          '<label class="task-t" for="box-' + t.id + '">' + esc(t.t) + '</label>' +
+          '<div class="task-m">' +
+            '<span class="pill ' + t.cat + '">' + LABEL[t.cat] + '</span>' +
+            '<span class="src">' + esc(t.src) + '</span>' +
+            (t.due ? '<span class="pill ' + (t.urgent ? "urgent" : "gold") + '">' + esc(t.due) + '</span>' : "") +
+          '</div>' +
+        '</div>' +
+        '<span class="burst" aria-hidden="true">★</span>' +
+      '</li>';
+    }).join("");
+  }
+
+  listEl.addEventListener("change", function (e) {
+    var box = e.target.closest(".box");
+    if (!box) return;
+    var row = box.closest(".task");
+    var id = row && row.getAttribute("data-id");
+    if (!id) return;
+
+    if (box.checked) {
+      state.done[id] = true;
+      state.stars += 1;
+      row.classList.add("done", "just");
+      setTimeout(function () { row.classList.remove("just"); }, 900);
+    } else {
+      delete state.done[id];
+      state.stars = Math.max(0, state.stars - 1);
+      row.classList.remove("done");
+    }
+    save(state);
+    drawStars();
+    var open = TASKS.filter(function (t) { return !state.done[t.id]; }).length;
+    countEl.textContent = open + " open";
+  });
+
+  /* tabs */
+  Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (b) {
+    b.addEventListener("click", function () {
+      Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (o) {
+        o.setAttribute("aria-selected", String(o === b));
+      });
+      cat = b.getAttribute("data-cat");
+      draw();
+    });
+  });
+
+  /* manual task entry */
+  function addTask() {
+    var inp = document.getElementById("task-input");
+    var v = inp.value.trim();
+    if (!v) return;
+    TASKS.unshift({
+      id: "n" + Date.now(),
+      cat: cat === "all" ? "ph" : cat,
+      t: v,
+      src: "manual"
+    });
+    inp.value = "";
+    draw();
+  }
+  document.getElementById("task-add").addEventListener("click", addTask);
+  document.getElementById("task-input").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") addTask();
+  });
+
+  /* ideas */
+  function addIdea() {
+    var inp = document.getElementById("idea-input");
+    var v = inp.value.trim();
+    if (!v) return;
+    var li = document.createElement("li");
+    var s = document.createElement("span");
+    s.textContent = v;
+    var tm = document.createElement("time");
+    tm.textContent = "just now";
+    li.appendChild(s);
+    li.appendChild(tm);
+    var list = document.getElementById("idea-list");
+    list.insertBefore(li, list.firstChild);
+    inp.value = "";
+  }
+  document.getElementById("idea-add").addEventListener("click", addIdea);
+  document.getElementById("idea-input").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") addIdea();
+  });
+
+  /* email done */
+  document.getElementById("mail-list").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-mail]");
+    if (!b) return;
+    var row = b.closest(".mailrow");
+    row.style.opacity = ".45";
+    b.disabled = true;
+    b.textContent = "Replied";
+    state.stars += 1;
+    save(state);
+    drawStars();
+    var left = document.querySelectorAll('#mail-list [data-mail]:not([disabled])').length;
+    document.getElementById("mail-count").textContent =
+      left === 0 ? "inbox clear" : left + " waiting";
+  });
+
+  /* the one focus */
+  document.getElementById("focus-done").addEventListener("click", function () {
+    var b = this;
+    b.disabled = true;
+    b.textContent = "★  Star earned";
+    state.stars += 1;
+    save(state);
+    drawStars();
+    var box = document.getElementById("box-t1");
+    if (box && !box.checked) { box.checked = true; box.dispatchEvent(new Event("change", { bubbles: true })); }
+  });
+
+  /* today's date, real */
+  try {
+    var d = new Date();
+    document.getElementById("today-str").textContent =
+      d.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+  } catch (e) { /* keep the static date */ }
+
+  drawStars();
+  draw();
+})();
+</script>
