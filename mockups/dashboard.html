@@ -23,34 +23,8 @@
     --sans:  "Archivo", ui-sans-serif, system-ui, -apple-system, sans-serif;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --paper:    #131210;
-      --paper-2:  #1c1a17;
-      --ink:      #f1eee7;
-      --ink-2:    #b0a99c;
-      --ink-3:    #7e776b;
-      --rule:     #332f29;
-      --rule-2:   #272420;
-      --accent:   #d98f7e;
-      --gold:     #d4ae4e;
-      --gold-lit: #ecca6b;
-      color-scheme: dark;
-    }
-  }
-  :root[data-theme="dark"] {
-    --paper:    #131210;
-    --paper-2:  #1c1a17;
-    --ink:      #f1eee7;
-    --ink-2:    #b0a99c;
-    --ink-3:    #7e776b;
-    --rule:     #332f29;
-    --rule-2:   #272420;
-    --accent:   #d98f7e;
-    --gold:     #d4ae4e;
-    --gold-lit: #ecca6b;
-    color-scheme: dark;
-  }
+  /* Deliberately single-theme: this is a warm-paper broadsheet in every
+     viewer's OS setting. No dark variant — the paper IS the design. */
 
   * { box-sizing: border-box; }
 
@@ -220,12 +194,19 @@
   }
 
   /* ---------- moon line ---------- */
-  .moon {
-    padding-block: 11px;
-    border-bottom: 1px solid var(--rule);
-    font-size: 11.5px; color: var(--ink-2);
+  .sky { padding-block: 12px 15px; border-bottom: 1px solid var(--rule); }
+  .moon { font-size: 11.5px; color: var(--ink-2); }
+  .moon .g { color: var(--ink-3); padding: 0 3px; }
+  .horo {
+    font-family: var(--serif); font-style: italic; font-weight: 300;
+    font-size: 15px; line-height: 1.5; color: var(--ink);
+    margin: 10px 0 0; max-width: 80ch; text-wrap: pretty;
   }
-  .moon .g { color: var(--ink-3); }
+  .horo .who {
+    font-style: normal; font-family: var(--sans); font-size: 9.5px;
+    font-weight: 600; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--ink-3); padding-right: 13px; vertical-align: 1.5px;
+  }
 
   /* ---------- body ---------- */
   .layout {
@@ -406,7 +387,14 @@
   .cd h3 { font-family: var(--serif); font-weight: 400; font-size: 19px; margin: 0; line-height: 1.25; }
   .cd .m { margin-top: 7px; display: flex; flex-wrap: wrap; align-items: baseline; }
   .cd .m .caps + .caps::before { content: "\00b7"; padding: 0 8px; color: var(--rule); }
-  .cd .nx { font-size: 13px; color: var(--ink-2); margin-top: 10px; }
+  .cd .nx { font-size: 13px; color: var(--ink-3); margin-top: 12px; font-style: italic; font-family: var(--serif); font-size: 14px; }
+  .before { list-style: none; margin: 12px 0 0; padding: 0; }
+  .before li {
+    display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 18px;
+    align-items: baseline; padding-block: 9px;
+    border-top: 1px solid var(--rule-2);
+    font-family: var(--serif); font-size: 15.5px; color: var(--ink);
+  }
 
   /* vision */
   .vision { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 9px; }
@@ -495,7 +483,7 @@
 <div class="wrap">
 
   <div class="notice">
-    <span class="caps">Prototype · every number, email and event below is invented · nothing is connected yet</span>
+    <span class="caps">Prototype · tasks, emails, events &amp; figures are invented · the sky band below is really computed from her birth date</span>
   </div>
 
   <div class="ticker" aria-label="Working principles">
@@ -507,19 +495,14 @@
       <span class="caps">Your command center</span>
       <h1>Good morning, <em>Shonna</em>.</h1>
       <p class="affirm">I am allowed to do one thing at a time. That is still progress.</p>
-      <div class="astro">
-        <span class="caps">Moon waning crescent in Libra (18% lit)</span>
-        <span class="caps">Into Scorpio 11:40 PM</span>
-        <span class="caps">Personal day 7</span>
-        <span class="caps">Month 11 · Year 5</span>
-      </div>
-      <span class="astro-flag">Needs her birth date, time &amp; place before any of this is real</span>
+      <div class="astro" id="astro"></div>
+      <span class="astro-flag">Birth time still needed for houses &amp; rising — the rest is computed from 31 March 1977</span>
     </div>
 
     <div class="countdown">
-      <span class="big num">128</span>
-      <span class="caps">Days to March 8</span>
-      <span class="caps">Studio №3 — lease signed</span>
+      <span class="big num" id="cd-days">151</span>
+      <span class="caps">Days to fifty</span>
+      <span class="caps">Wednesday, 31 March 2027</span>
     </div>
   </header>
 
@@ -543,9 +526,9 @@
     </div>
   </div>
 
-  <div class="moon">
-    <span class="g">☾</span> New Moon in Scorpio — Wed Nov 12, 11:28 PM CT (20°41′, your 4th house)
-    <span class="g">·</span> First Quarter Nov 19 <span class="g">·</span> Full Moon in Gemini Dec 4
+  <div class="sky">
+    <div class="moon" id="moonline"></div>
+    <p class="horo" id="horo"></p>
   </div>
 
   <div class="layout">
@@ -756,22 +739,22 @@
       <section class="sec">
         <div class="sec-head">
           <span class="n">06</span>
-          <h2>Counting down</h2>
-          <span class="caps">Next step only</span>
+          <h2>Before fifty</h2>
+          <span class="caps">31 March 2027</span>
         </div>
         <div class="cd">
           <div>
-            <div class="d num">128</div>
+            <div class="d num" id="cd-days-2">151</div>
             <span class="caps dl">Days</span>
           </div>
           <div>
-            <h3>Studio №3 — lease signed</h3>
-            <div class="m">
-              <span class="caps">Target March 8</span>
-              <span class="caps">Site shortlist</span>
-              <span class="caps">4 of 11 steps</span>
-            </div>
-            <p class="nx"><b>Next:</b> Walk the Overland Park space with Justin — by Fri, Nov 7.</p>
+            <h3>What she wants true by then</h3>
+            <ul class="before">
+              <li><span>The third studio open</span><span class="caps">Site shortlist · 4 of 11</span></li>
+              <li><span>Sunless Legacy past $6k a month</span><span class="caps">$4,280 today</span></li>
+              <li><span>Half marathon — under 2:15</span><span class="caps">Training starts January</span></li>
+            </ul>
+            <p class="nx">A placeholder list. Tell me what is actually on it and it becomes hers.</p>
           </div>
         </div>
       </section>
@@ -1012,6 +995,142 @@
       state.stars += 1; save(state); drawStars();
     }
   });
+
+  /* ---------- her sky: computed from 31 March 1977, not canned ---------- */
+  var BIRTH = { y: 1977, m: 3, d: 31, sun: "Aries" };
+  var SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
+               "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+
+  function reduceNum(n, master) {
+    while (n > 9) {
+      if (master && (n === 11 || n === 22 || n === 33)) return n;
+      n = String(n).split("").reduce(function (a, c) { return a + (+c); }, 0);
+    }
+    return n;
+  }
+  function rad(x) { return x * Math.PI / 180; }
+  function norm(x) { x = x % 360; return x < 0 ? x + 360 : x; }
+  function jd2000(dt) { return dt.getTime() / 86400000 - 10957.5; }
+
+  function sunLon(d) {
+    var M = norm(357.5291092 + 0.98560028 * d);
+    var L = norm(280.459 + 0.98564736 * d);
+    return norm(L + 1.915 * Math.sin(rad(M)) + 0.020 * Math.sin(rad(2 * M)));
+  }
+  function moonLon(d) {
+    var Lp = 218.3164477 + 13.17639648 * d;
+    var D  = 297.8501921 + 12.19074912 * d;
+    var M  = 357.5291092 + 0.98560028  * d;
+    var Mp = 134.9633964 + 13.06499295 * d;
+    return norm(Lp
+      + 6.289 * Math.sin(rad(Mp))
+      - 1.274 * Math.sin(rad(Mp - 2 * D))
+      + 0.658 * Math.sin(rad(2 * D))
+      - 0.186 * Math.sin(rad(M))
+      - 0.059 * Math.sin(rad(2 * Mp - 2 * D))
+      - 0.057 * Math.sin(rad(Mp - 2 * D + M))
+      + 0.053 * Math.sin(rad(Mp + 2 * D))
+      + 0.046 * Math.sin(rad(2 * D - M))
+      + 0.041 * Math.sin(rad(Mp - M))
+      - 0.035 * Math.sin(rad(D))
+      - 0.031 * Math.sin(rad(Mp + M)));
+  }
+  function elongAt(dt) { var d = jd2000(dt); return norm(moonLon(d) - sunLon(d)); }
+  function phaseName(e) {
+    if (e < 11.25 || e >= 348.75) return "New moon";
+    if (e < 78.75)  return "Waxing crescent";
+    if (e < 101.25) return "First quarter";
+    if (e < 168.75) return "Waxing gibbous";
+    if (e < 191.25) return "Full moon";
+    if (e < 258.75) return "Waning gibbous";
+    if (e < 281.25) return "Last quarter";
+    return "Waning crescent";
+  }
+  /* next time the moon changes sign */
+  function nextSignChange(from, sign) {
+    var step = 20 * 60000, t = from.getTime();
+    for (var i = 0; i < 260; i++) {
+      t += step;
+      var dt = new Date(t);
+      if (Math.floor(moonLon(jd2000(dt)) / 30) !== sign) return dt;
+    }
+    return null;
+  }
+  /* next crossing of a given elongation (0 new, 180 full) */
+  function nextPhase(from, target) {
+    var step = 3600000, t = from.getTime();
+    var prev = norm(elongAt(new Date(t)) - target);
+    for (var i = 0; i < 800; i++) {
+      t += step;
+      var cur = norm(elongAt(new Date(t)) - target);
+      if (cur < prev && prev > 180) return new Date(t);
+      prev = cur;
+    }
+    return null;
+  }
+
+  var ARIES_LINES = [
+    "The thing you have been circling takes nine minutes. The circling has taken four days.",
+    "Someone is waiting on a number from you, not a decision. Give them the number.",
+    "Your patience is not a virtue today, it is a delay. Say the short version.",
+    "A room you were dreading turns out to be on your side. Walk in first, not last.",
+    "You are allowed to close the thing that is finished without a ceremony.",
+    "Momentum is cheaper than motivation this week. Start badly and keep going.",
+    "The quiet ask you keep postponing is the one that pays. Make it before noon."
+  ];
+
+  (function sky() {
+    var now = new Date();
+    var d = jd2000(now);
+    var ml = moonLon(d);
+    var e  = norm(ml - sunLon(d));
+    var lit = Math.round((1 - Math.cos(rad(e))) / 2 * 100);
+    var signIdx = Math.floor(ml / 30);
+    var moonSign = SIGNS[signIdx];
+    var phase = phaseName(e);
+
+    /* numerology — all of it falls out of her birth date */
+    var bm = reduceNum(BIRTH.m), bd = reduceNum(BIRTH.d), by = reduceNum(BIRTH.y);
+    var life   = reduceNum(bm + bd + by, true);
+    var pYear  = reduceNum(bm + bd + reduceNum(now.getFullYear()), true);
+    var pMonth = reduceNum(pYear + reduceNum(now.getMonth() + 1), true);
+    var pDay   = reduceNum(pMonth + reduceNum(now.getDate()), true);
+
+    var into = nextSignChange(now, signIdx);
+    var intoTxt = into
+      ? "Into " + SIGNS[(signIdx + 1) % 12] + " " +
+        into.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })
+      : null;
+
+    var bits = ["Sun in " + BIRTH.sun,
+                phase + " in " + moonSign + " (" + lit + "% lit)"];
+    if (intoTxt) bits.push(intoTxt);
+    bits.push("Personal day " + pDay, "Month " + pMonth + " · Year " + pYear, "Life path " + life);
+
+    document.getElementById("astro").innerHTML =
+      bits.map(function (b) { return '<span class="caps">' + esc(b) + "</span>"; }).join("");
+
+    function when(dt) {
+      return dt ? dt.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }) : "—";
+    }
+    var nf = nextPhase(now, 180), nn = nextPhase(now, 0);
+    document.getElementById("moonline").innerHTML =
+      '<span class="g">☾</span>' + esc(phase) + " in " + esc(moonSign) + ", " + lit + "% lit" +
+      '<span class="g">·</span>Full moon ' + esc(when(nf)) +
+      '<span class="g">·</span>New moon ' + esc(when(nn)) +
+      '<span class="g">·</span>Born Topeka, 31 March 1977';
+
+    var doy = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+    document.getElementById("horo").innerHTML =
+      '<span class="who">Aries · today</span>' + esc(ARIES_LINES[doy % ARIES_LINES.length]);
+
+    /* days to fifty */
+    var fifty = new Date(BIRTH.y + 50, BIRTH.m - 1, BIRTH.d);
+    var midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var days = Math.max(0, Math.round((fifty - midnight) / 86400000));
+    document.getElementById("cd-days").textContent = days;
+    document.getElementById("cd-days-2").textContent = days;
+  })();
 
   /* ---------- real date ---------- */
   try {
